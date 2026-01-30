@@ -398,7 +398,12 @@ class BookWriterWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         DATA_DIR.mkdir(exist_ok=True)
-        api_key = os.getenv("GEMINI_API_KEY")
+        api_key_path = Path(__file__).parent / "gemini_api_key.txt"
+        api_key = None
+        if api_key_path.exists():
+            api_key = api_key_path.read_text(encoding="utf-8").strip()
+            if not api_key:
+                api_key = None
         self.llm = LLMClient(api_key)
 
         self.setWindowTitle("Book Writer Agent (PyQt6)")
