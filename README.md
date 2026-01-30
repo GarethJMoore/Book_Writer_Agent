@@ -1,61 +1,48 @@
-# Agentic Book Writer (v0)
+# Book Writer Agent (PyQt6)
 
-A minimal Next.js app that runs an agentic book-writing pipeline with validator-driven revisions. Drafts chapters, validates for consistency/style/citations, and persists everything to disk under `/data`.
+A Python-only rewrite of the Book Writer Agent using a PyQt6 desktop interface and the Gemini 2.5 Flash model. The app includes an idea workshop chatbot, a style profile generator, and style/consistency checkers that reference the generated `.txt` reports.
 
-## Setup
+## Requirements
 
-```bash
-npm install
-```
+- Python 3.10+
+- A Gemini API key set in `GEMINI_API_KEY`
 
-Create an `.env.local` file with:
-
-```
-OPENAI_API_KEY=your_key_here
-```
-
-If the key is missing, the app falls back to a mock LLM adapter for deterministic demo output.
-
-## Run locally
+Install dependencies:
 
 ```bash
-npm run dev
+pip install -r requirements.txt
 ```
 
-Open `http://localhost:3000`.
+## Run the app
 
-## Usage
+```bash
+python main.py
+```
 
-1. Fill in idea, target length, style guide, and optional sources.
-2. Click **Run** to start a pipeline run.
-3. Watch streaming logs and issues.
-4. Use **Stop** or **Continue** to control runs.
-5. Export the manuscript or report JSON with the buttons.
+## Features
 
-Runs persist to `/data/runs/<run_id>/` with:
+### Idea Workshop Tab
 
-- `inputs.json`
-- `outline.md`
-- `chapters/<i>.md`
-- `manuscript.md`
-- `book_bible.json`
-- `issues_<iteration>.json`
-- `logs.ndjson`
-- `report.json`
+- Chat with a guided idea workshop coach.
+- Save a full idea workshop report to `data/idea_workshop_report.txt`.
 
-## LLM Adapter Architecture
+### Style Builder Tab
 
-Adapters live in `/lib/llm` and conform to the `LLMAdapter` interface (`generate` + `stream`).
+- Provide an author and descriptive style notes.
+- Generate a detailed style profile saved to `data/style_profile.txt`.
 
-To add a new provider:
+### Checkers Tab
 
-1. Create a new adapter in `/lib/llm/<provider>.ts` implementing the interface.
-2. Update `createLLMAdapter` in `/lib/llm/index.ts` to select your adapter.
-3. Ensure the adapter reads credentials from environment variables.
+- Paste manuscript text to review.
+- Style Checker compares text against `style_profile.txt`.
+- Consistency Checker compares text against `idea_workshop_report.txt`.
 
-## Notes
+## Environment Setup
 
-- Validators emit structured issues only (no rewriting).
-- The revision stage is the only editor.
-- Citations validator is active only when sources are provided.
-- URLs are treated as text placeholders; no web fetching is performed.
+Set the Gemini API key before running:
+
+```bash
+export GEMINI_API_KEY="your_key_here"
+```
+
+If the key is missing, the app provides mock responses for UI testing.
