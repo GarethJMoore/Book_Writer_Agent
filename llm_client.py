@@ -11,7 +11,7 @@ DATA_DIR = Path("data")
 IDEA_REPORT_PATH = DATA_DIR / "idea_workshop_report.txt"
 STYLE_PROFILE_PATH = DATA_DIR / "style_profile.txt"
 FACT_LIBRARY_PATH = DATA_DIR / "fact_library.txt"
-API_KEY_PATH = Path(__file__).resolve().parent / "gemini_api_key.txt"
+API_KEY_PATH = Path("gemini_api_key.txt")
 
 
 @dataclass
@@ -24,7 +24,11 @@ def load_api_key() -> Optional[str]:
     if not API_KEY_PATH.exists():
         return None
     value = API_KEY_PATH.read_text(encoding="utf-8").strip()
-    return value or None
+    if not value:
+        return None
+    if value.upper() in {"YOUR_KEY_HERE", "MOCK", "MOCK_API_KEY"}:
+        return None
+    return value
 
 
 class LLMClient:
